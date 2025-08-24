@@ -1,19 +1,23 @@
 package com.circulation.singularity_engineering_core.mixin;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import zone.rong.mixinbooter.ILateMixinLoader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 
 @SuppressWarnings({"unused", "SameParameterValue"})
 public class LateMixinLoader implements ILateMixinLoader {
 
-    public static final Logger LOG = LogManager.getLogger("BetterMeteorite_PRE");
-    public static final String LOG_PREFIX = "[BetterMeteorite]" + ' ';
-    private static final Map<String, BooleanSupplier> MIXIN_CONFIGS = new LinkedHashMap<>();
+    public static final Logger LOG = LogManager.getLogger("Singularity_PRE");
+    public static final String LOG_PREFIX = "[Singularity]" + ' ';
+    private static final Map<String, BooleanSupplier> MIXIN_CONFIGS = new Object2ObjectLinkedOpenHashMap<>();
 
     static {
 

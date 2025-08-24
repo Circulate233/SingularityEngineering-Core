@@ -2,6 +2,7 @@ package com.circulation.singularity_engineering_core;
 
 import com.circulation.singularity_engineering_core.proxy.CommonProxy;
 import net.minecraft.launchwrapper.LogWrapper;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -13,12 +14,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = SingularityEngineeringCore.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION,
-        dependencies = ""
+        dependencies = "required-after:modularmachinery@[2.1.0,);" +
+                "required-after:mixinbooter@[8.0,);"
 )
 public class SingularityEngineeringCore {
     public static final String MOD_ID = "singularity_engineering_core";
     public static final String CLIENT_PROXY = "com.circulation.singularity_engineering_core.proxy.ClientProxy";
     public static final String COMMON_PROXY = "com.circulation.singularity_engineering_core.proxy.CommonProxy";
+
+    public static final boolean isClient = FMLCommonHandler.instance().getSide().isClient();
 
     public static final SimpleNetworkWrapper NET_CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(MOD_ID);
 
