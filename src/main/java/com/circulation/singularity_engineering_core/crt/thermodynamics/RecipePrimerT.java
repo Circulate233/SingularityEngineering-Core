@@ -24,6 +24,7 @@ public class RecipePrimerT {
             float min,
             @Optional(valueDouble = Thermodynamics.maxTemperature) float max) {
         primer.addPreCheckHandler(event -> {
+            if (event.isCanceled())return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             if (system == null) return;
@@ -32,20 +33,22 @@ public class RecipePrimerT {
                 event.setFailed("温度不符合需求区间");
             }
         }).addPreTickHandler(event -> {
+            if (event.isCanceled())return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             if (system == null) return;
             var heat = system.getValue();
             if (heat < min || heat > max) {
-                event.preventProgressing("温度不符合需求区间");
+                event.setFailed(false,"温度不符合需求区间");
             }
         }).addFactoryPreTickHandler(event -> {
+            if (event.isCanceled())return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             if (system == null) return;
             var heat = system.getValue();
             if (heat < min || heat > max) {
-                event.preventProgressing("温度不符合需求区间");
+                event.setFailed(false,"温度不符合需求区间");
             }
         });
 
@@ -114,6 +117,7 @@ public class RecipePrimerT {
             @Optional(valueBoolean = true) boolean isHeating
     ) {
         return primer.addPostTickHandler(event -> {
+            if (event.isCanceled())return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             var parallelism = event.getActiveRecipe().getParallelism();
@@ -130,6 +134,7 @@ public class RecipePrimerT {
                 }
             }
         }).addFactoryPostTickHandler(event -> {
+            if (event.isCanceled())return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             var parallelism = event.getActiveRecipe().getParallelism();

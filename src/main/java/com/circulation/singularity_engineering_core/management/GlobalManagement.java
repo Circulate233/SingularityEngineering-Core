@@ -3,19 +3,19 @@ package com.circulation.singularity_engineering_core.management;
 import com.circulation.singularity_engineering_core.type.TemplateType;
 import hellfirepvp.modularmachinery.common.machine.DynamicMachine;
 import hellfirepvp.modularmachinery.common.machine.MachineRegistry;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class GlobalManagement {
 
-    private static final Object2ObjectMap<Class<? extends TemplateType>, Object2ObjectMap<ResourceLocation, TemplateType>> systemMap = new Object2ObjectOpenHashMap<>();
+    private static final Map<Class<? extends TemplateType>, Map<ResourceLocation, TemplateType>> systemMap = new ConcurrentHashMap<>();
 
     private static final List<Consumer<DynamicMachine>> preExecution = new ObjectArrayList<>();
 
@@ -51,10 +51,8 @@ public class GlobalManagement {
             ResourceLocation name,
             S system
     ) {
-        synchronized (systemMap) {
-            return (S) systemMap
-                    .computeIfAbsent(sClass, c -> new Object2ObjectOpenHashMap<>())
-                    .put(name, system);
-        }
+        return (S) systemMap
+                .computeIfAbsent(sClass, c -> new ConcurrentHashMap<>())
+                .put(name, system);
     }
 }

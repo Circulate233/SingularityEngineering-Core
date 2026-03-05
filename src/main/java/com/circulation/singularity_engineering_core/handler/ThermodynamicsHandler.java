@@ -9,7 +9,6 @@ import github.kasuminova.mmce.common.event.client.ControllerGUIRenderEvent;
 import github.kasuminova.mmce.common.event.machine.MachineTickEvent;
 import hellfirepvp.modularmachinery.ModularMachinery;
 import hellfirepvp.modularmachinery.common.machine.DynamicMachine;
-import hellfirepvp.modularmachinery.common.machine.factory.FactoryRecipeThread;
 import hellfirepvp.modularmachinery.common.tiles.base.TileMultiblockMachineController;
 import it.unimi.dsi.fastutil.ints.Int2FloatMap;
 import it.unimi.dsi.fastutil.ints.Int2FloatOpenHashMap;
@@ -79,7 +78,7 @@ public class ThermodynamicsHandler {
 
     @ZenMethod
     public static float getDefBiomeTemperature(String biomeID) {
-        return defBiomeMap.get(biomeID);
+        return defBiomeMap.getFloat(biomeID);
     }
 
     @ZenMethod
@@ -117,15 +116,10 @@ public class ThermodynamicsHandler {
         cooldownMap.put(new ResourceLocation(ModularMachinery.MODID, machineName), speed);
     }
 
-    public static final FactoryRecipeThread thread = FactoryRecipeThread.createCoreThread("thread.thermodynamics");
-
     public static void register() {
         GlobalManagement.addPreExecution(machine -> {
             if (canRegister(machine.getRegistryName())) {
                 Thermodynamics.addType(machine.getRegistryName(), new ThermodynamicsType());
-                if (!thread.getRecipeSet().isEmpty()) {
-                    machine.addCoreThread(thread);
-                }
                 addInfo(machine);
                 addNaturalChanges(machine);
             }

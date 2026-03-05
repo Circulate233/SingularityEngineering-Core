@@ -14,11 +14,13 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 public interface TemplateType {
 
     @ZenGetter("maxValue")
+    @ZenMethod
     float getMaxValue();
 
     TemplateType setMaxValue(float value);
 
     @ZenGetter("minValue")
+    @ZenMethod
     float getMinValue();
 
     TemplateType setMinValue(float value);

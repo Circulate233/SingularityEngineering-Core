@@ -3,6 +3,7 @@ package com.circulation.singularity_engineering_core.system;
 import com.circulation.singularity_engineering_core.type.TemplateType;
 import crafttweaker.annotations.ZenRegister;
 import hellfirepvp.modularmachinery.common.tiles.base.TileMultiblockMachineController;
+import lombok.Getter;
 import net.minecraft.nbt.NBTTagCompound;
 import stanhebben.zenscript.annotations.NotNull;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -21,6 +22,7 @@ public abstract class TemplateSystem<T extends TemplateType> {
     protected final T type;
     protected volatile float value;
     protected final WeakReference<TileMultiblockMachineController> ctrl;
+    @Getter
     protected volatile TemperatureStatus status;
 
     public TemplateSystem(T type, TileMultiblockMachineController ctrl) {
@@ -31,6 +33,7 @@ public abstract class TemplateSystem<T extends TemplateType> {
     }
 
     @ZenGetter("value")
+    @ZenMethod
     public float getValue() {
         var c = ctrl.get();
         if (c == null) throw new NullPointerException("The controller has been deleted but is still running");
@@ -39,6 +42,7 @@ public abstract class TemplateSystem<T extends TemplateType> {
     }
 
     @ZenSetter("value")
+    @ZenMethod
     public void setCrtValue(float value) {
         setValue(value);
     }
@@ -111,10 +115,6 @@ public abstract class TemplateSystem<T extends TemplateType> {
         } else {
             status = TemperatureStatus.LOW;
         }
-    }
-
-    public TemperatureStatus getStatus() {
-        return status;
     }
 
     @ZenMethod

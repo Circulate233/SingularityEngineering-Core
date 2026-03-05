@@ -4,6 +4,7 @@ import com.circulation.singularity_engineering_core.handler.ThermodynamicsHandle
 import com.circulation.singularity_engineering_core.management.Thermodynamics;
 import crafttweaker.annotations.ZenRegister;
 import hellfirepvp.modularmachinery.common.tiles.base.TileMultiblockMachineController;
+import lombok.Getter;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 
@@ -13,31 +14,23 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 @ZenClass(CrtName + "type.ThermodynamicsType")
 public class ThermodynamicsType implements TemplateType {
 
-    private float maxTemperature = Thermodynamics.maxTemperature;
-    private float minTemperature = Thermodynamics.minTemperature;
-    private float defTemperature = 298.15f;
+    @Getter
+    private float maxValue = Thermodynamics.maxTemperature;
+    @Getter
+    private float minValue = Thermodynamics.minTemperature;
+    private float defValue = 298.15f;
     private float heatingSpeed = 0.0f;
     private float coolDownSpeed = 0.0f;
 
     @Override
-    public float getMaxValue() {
-        return maxTemperature;
-    }
-
-    @Override
     public ThermodynamicsType setMaxValue(float value) {
-        maxTemperature = value;
+        maxValue = value;
         return this;
     }
 
     @Override
-    public float getMinValue() {
-        return minTemperature;
-    }
-
-    @Override
     public ThermodynamicsType setMinValue(float value) {
-        minTemperature = value;
+        minValue = value;
         return this;
     }
 
@@ -45,19 +38,19 @@ public class ThermodynamicsType implements TemplateType {
     public float getDefValue(TileMultiblockMachineController ctrl) {
         float def;
         if ((def = ThermodynamicsHandler.getDefBiomeTemperature(
-                ctrl.getWorld().getBiome(ctrl.getPos()).getBiomeName())) >= 0) {
+                ctrl.getWorld().getBiome(ctrl.getPos()).biomeName)) >= 0) {
             return def;
         } else if ((def = ThermodynamicsHandler.getDefWorldTemperature(
                 ctrl.getWorld().provider.getDimension())) >= 0) {
             return def;
         }
 
-        return defTemperature;
+        return defValue;
     }
 
     @Override
     public TemplateType setDefValue(float value) {
-        defTemperature = value;
+        defValue = value;
         return this;
     }
 
