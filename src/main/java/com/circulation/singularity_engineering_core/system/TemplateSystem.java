@@ -20,8 +20,8 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 public abstract class TemplateSystem<T extends TemplateType> {
 
     protected final T type;
-    protected volatile float value;
     protected final WeakReference<TileMultiblockMachineController> ctrl;
+    protected volatile float value;
     @Getter
     protected volatile TemperatureStatus status;
 
@@ -39,6 +39,23 @@ public abstract class TemplateSystem<T extends TemplateType> {
         if (c == null) throw new NullPointerException("The controller has been deleted but is still running");
         readNBT(c.getCustomDataTag());
         return value;
+    }
+
+    public synchronized TemplateSystem<T> setValue(float value) {
+        if (value == this.value) return this;
+        if (value > getMaxValue()) {
+            this.value = getMaxValue();
+        } else if (value < getMinValue()) {
+            this.value = getMinValue();
+        } else {
+            this.value = value;
+        }
+        var c = ctrl.get();
+        if (c == null) throw new NullPointerException("The controller has been deleted but is still running");
+        final var nbt = c.getCustomDataTag();
+        writeNBT(nbt);
+        changeStatus();
+        return this;
     }
 
     @ZenSetter("value")
@@ -85,23 +102,6 @@ public abstract class TemplateSystem<T extends TemplateType> {
         writeNBT(nbt);
         changeStatus();
         return success;
-    }
-
-    public synchronized TemplateSystem<T> setValue(float value) {
-        if (value == this.value) return this;
-        if (value > getMaxValue()) {
-            this.value = getMaxValue();
-        } else if (value < getMinValue()) {
-            this.value = getMinValue();
-        } else {
-            this.value = value;
-        }
-        var c = ctrl.get();
-        if (c == null) throw new NullPointerException("The controller has been deleted but is still running");
-        final var nbt = c.getCustomDataTag();
-        writeNBT(nbt);
-        changeStatus();
-        return this;
     }
 
     public void changeStatus() {

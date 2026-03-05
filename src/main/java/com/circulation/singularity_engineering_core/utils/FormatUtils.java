@@ -16,8 +16,8 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 @ZenRegister
 @ZenClass(CrtName + "FormatUtils")
 public class FormatUtils {
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##");
     public static final BigInteger BigLongMax = BigInteger.valueOf(Long.MAX_VALUE);
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##");
     public static boolean isClient = FMLCommonHandler.instance().getEffectiveSide().isClient();
 
     static {

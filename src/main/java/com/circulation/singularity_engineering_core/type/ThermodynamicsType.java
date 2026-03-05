@@ -38,10 +38,10 @@ public class ThermodynamicsType implements TemplateType {
     public float getDefValue(TileMultiblockMachineController ctrl) {
         float def;
         if ((def = ThermodynamicsHandler.getDefBiomeTemperature(
-                ctrl.getWorld().getBiome(ctrl.getPos()).biomeName)) >= 0) {
+            ctrl.getWorld().getBiome(ctrl.getPos()).biomeName)) >= 0) {
             return def;
         } else if ((def = ThermodynamicsHandler.getDefWorldTemperature(
-                ctrl.getWorld().provider.getDimension())) >= 0) {
+            ctrl.getWorld().provider.getDimension())) >= 0) {
             return def;
         }
 
@@ -59,14 +59,14 @@ public class ThermodynamicsType implements TemplateType {
         return heatingSpeed;
     }
 
-    @ZenGetter("coolDownSpeed")
-    public float getCoolDownSpeed() {
-        return coolDownSpeed;
-    }
-
     public ThermodynamicsType setHeatingSpeed(float heatingSpeed) {
         this.heatingSpeed = heatingSpeed;
         return this;
+    }
+
+    @ZenGetter("coolDownSpeed")
+    public float getCoolDownSpeed() {
+        return coolDownSpeed;
     }
 
     public ThermodynamicsType setCoolDownSpeed(float coolDownSpeed) {

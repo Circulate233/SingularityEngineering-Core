@@ -4,9 +4,9 @@ import com.circulation.singularity_engineering_core.type.ThermodynamicsType;
 import crafttweaker.annotations.ZenRegister;
 import hellfirepvp.modularmachinery.common.tiles.base.TileMultiblockMachineController;
 import net.minecraft.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
-import org.jetbrains.annotations.NotNull;
 
 import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 

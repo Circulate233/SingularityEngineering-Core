@@ -30,8 +30,20 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 @ZenClass(CrtName + "ThermodynamicsHelper")
 public class ThermodynamicsHandler {
 
+    private static final Object2FloatMap<ResourceLocation> maxMap = new Object2FloatOpenHashMap<>();
+    private static final Object2FloatMap<ResourceLocation> minMap = new Object2FloatOpenHashMap<>();
+    private static final Object2FloatMap<ResourceLocation> defMap = new Object2FloatOpenHashMap<>();
+    private static final Int2FloatMap defWorldMap = new Int2FloatOpenHashMap();
+    private static final Object2FloatMap<String> defBiomeMap = new Object2FloatOpenHashMap<>();
+    private static final Object2FloatMap<ResourceLocation> heatingMap = new Object2FloatOpenHashMap<>();
+    private static final Object2FloatMap<ResourceLocation> cooldownMap = new Object2FloatOpenHashMap<>();
     public static boolean isRegisterAll = true;
     public static ObjectSet<ResourceLocation> exceptionalMachines = new ObjectOpenHashSet<>();
+
+    static {
+        defWorldMap.defaultReturnValue(-1.0f);
+        defBiomeMap.defaultReturnValue(-1.0f);
+    }
 
     @ZenMethod
     public static void isRegisterAll(boolean a) {
@@ -56,19 +68,6 @@ public class ThermodynamicsHandler {
 
     public static boolean canRegister(ResourceLocation name) {
         return isRegisterAll != exceptionalMachines.contains(name);
-    }
-
-    private static final Object2FloatMap<ResourceLocation> maxMap = new Object2FloatOpenHashMap<>();
-    private static final Object2FloatMap<ResourceLocation> minMap = new Object2FloatOpenHashMap<>();
-    private static final Object2FloatMap<ResourceLocation> defMap = new Object2FloatOpenHashMap<>();
-    private static final Int2FloatMap defWorldMap = new Int2FloatOpenHashMap();
-    private static final Object2FloatMap<String> defBiomeMap = new Object2FloatOpenHashMap<>();
-    private static final Object2FloatMap<ResourceLocation> heatingMap = new Object2FloatOpenHashMap<>();
-    private static final Object2FloatMap<ResourceLocation> cooldownMap = new Object2FloatOpenHashMap<>();
-
-    static {
-        defWorldMap.defaultReturnValue(-1.0f);
-        defBiomeMap.defaultReturnValue(-1.0f);
     }
 
     @ZenMethod
@@ -138,15 +137,15 @@ public class ThermodynamicsHandler {
 
     public static void load() {
         maxMap.object2FloatEntrySet()
-                .forEach(e -> Thermodynamics.getType(e.getKey()).setMaxValue(e.getFloatValue()));
+              .forEach(e -> Thermodynamics.getType(e.getKey()).setMaxValue(e.getFloatValue()));
         minMap.object2FloatEntrySet()
-                .forEach(e -> Thermodynamics.getType(e.getKey()).setMinValue(e.getFloatValue()));
+              .forEach(e -> Thermodynamics.getType(e.getKey()).setMinValue(e.getFloatValue()));
         defMap.object2FloatEntrySet()
-                .forEach(e -> Thermodynamics.getType(e.getKey()).setDefValue(e.getFloatValue()));
+              .forEach(e -> Thermodynamics.getType(e.getKey()).setDefValue(e.getFloatValue()));
         heatingMap.object2FloatEntrySet()
-                .forEach(e -> Thermodynamics.getType(e.getKey()).setHeatingSpeed(e.getFloatValue()));
+                  .forEach(e -> Thermodynamics.getType(e.getKey()).setHeatingSpeed(e.getFloatValue()));
         cooldownMap.object2FloatEntrySet()
-                .forEach(e -> Thermodynamics.getType(e.getKey()).setCoolDownSpeed(e.getFloatValue()));
+                   .forEach(e -> Thermodynamics.getType(e.getKey()).setCoolDownSpeed(e.getFloatValue()));
     }
 
     private static void addInfo(DynamicMachine machine) {

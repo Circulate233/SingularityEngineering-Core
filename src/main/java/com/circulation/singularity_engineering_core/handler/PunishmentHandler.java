@@ -6,7 +6,7 @@ public enum PunishmentHandler {
     DESTROY_STRUCTURE,
     EXPLOSION;
 
-    public static PunishmentHandler fromLevelGetPunish(int level){
+    public static PunishmentHandler fromLevelGetPunish(int level) {
         return PunishmentHandler.values()[level];
     }
 }

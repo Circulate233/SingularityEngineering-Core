@@ -20,11 +20,11 @@ public class RecipePrimerT {
     @ZenMethod
     @NotNull
     public static RecipePrimer setHeatDemand(
-            @NotNull RecipePrimer primer,
-            float min,
-            @Optional(valueDouble = Thermodynamics.maxTemperature) float max) {
+        @NotNull RecipePrimer primer,
+        float min,
+        @Optional(valueDouble = Thermodynamics.maxTemperature) float max) {
         primer.addPreCheckHandler(event -> {
-            if (event.isCanceled())return;
+            if (event.isCanceled()) return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             if (system == null) return;
@@ -33,32 +33,32 @@ public class RecipePrimerT {
                 event.setFailed("温度不符合需求区间");
             }
         }).addPreTickHandler(event -> {
-            if (event.isCanceled())return;
+            if (event.isCanceled()) return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             if (system == null) return;
             var heat = system.getValue();
             if (heat < min || heat > max) {
-                event.setFailed(false,"温度不符合需求区间");
+                event.setFailed(false, "温度不符合需求区间");
             }
         }).addFactoryPreTickHandler(event -> {
-            if (event.isCanceled())return;
+            if (event.isCanceled()) return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             if (system == null) return;
             var heat = system.getValue();
             if (heat < min || heat > max) {
-                event.setFailed(false,"温度不符合需求区间");
+                event.setFailed(false, "温度不符合需求区间");
             }
         });
 
         if (isClient)
             primer.addRecipeTooltip(
-                    I18n.translateToLocalFormatted(
-                            "text.heat_demand",
-                            FormatUtils.formatFloat(min, 2),
-                            FormatUtils.formatFloat(max, 2)
-                    )
+                I18n.translateToLocalFormatted(
+                    "text.heat_demand",
+                    FormatUtils.formatFloat(min, 2),
+                    FormatUtils.formatFloat(max, 2)
+                )
             );
 
         return primer;
@@ -67,8 +67,8 @@ public class RecipePrimerT {
     @ZenMethod
     @NotNull
     public static RecipePrimer setPunish(
-            @NotNull RecipePrimer primer,
-            int level
+        @NotNull RecipePrimer primer,
+        int level
     ) {
         Thermodynamics.addRecipePunish(primer.getRecipeRegistryName(), level);
         primer.addRecipeTooltip("text.punish.level." + level);
@@ -77,9 +77,9 @@ public class RecipePrimerT {
 
     @ZenMethod
     public static RecipePrimer addHeatChance(
-            @NotNull RecipePrimer primer,
-            float chance,
-            @Optional(valueBoolean = true) boolean isHeating
+        @NotNull RecipePrimer primer,
+        float chance,
+        @Optional(valueBoolean = true) boolean isHeating
     ) {
         return primer.addFinishHandler(event -> {
             var ctrl = event.getController();
@@ -112,12 +112,12 @@ public class RecipePrimerT {
 
     @ZenMethod
     public static RecipePrimer addTickHeatChance(
-            @NotNull RecipePrimer primer,
-            float chance,
-            @Optional(valueBoolean = true) boolean isHeating
+        @NotNull RecipePrimer primer,
+        float chance,
+        @Optional(valueBoolean = true) boolean isHeating
     ) {
         return primer.addPostTickHandler(event -> {
-            if (event.isCanceled())return;
+            if (event.isCanceled()) return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             var parallelism = event.getActiveRecipe().getParallelism();
@@ -134,7 +134,7 @@ public class RecipePrimerT {
                 }
             }
         }).addFactoryPostTickHandler(event -> {
-            if (event.isCanceled())return;
+            if (event.isCanceled()) return;
             var ctrl = event.getController();
             var system = Thermodynamics.getSystem(ctrl);
             var parallelism = event.getActiveRecipe().getParallelism();

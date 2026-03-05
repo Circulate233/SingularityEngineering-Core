@@ -23,6 +23,8 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 @ZenRegister
 @ZenClass(CrtName + "management.Thermodynamics")
 public class Thermodynamics {
+    public static final float maxTemperature = 1.417e+32f;
+    public static final float minTemperature = 0;
     private static final Map<TileMultiblockMachineController, ThermodynamicsSystem> CACHED = new ConcurrentHashMap<>();
     private static final Object2IntMap<ResourceLocation> punishCACHED = new Object2IntOpenHashMap<>();
     private static final Object2IntMap<ResourceLocation> punishMachineCACHED = new Object2IntOpenHashMap<>();
@@ -40,12 +42,9 @@ public class Thermodynamics {
         var machine = p.getAssociatedMachineName();
 
         return punishCACHED.containsKey(p.getRecipeRegistryName())
-                ? punishCACHED.getInt(p.getRecipeRegistryName())
-                : punishMachineCACHED.getInt(machine);
+            ? punishCACHED.getInt(p.getRecipeRegistryName())
+            : punishMachineCACHED.getInt(machine);
     }
-
-    public static final float maxTemperature = 1.417e+32f;
-    public static final float minTemperature = 0;
 
     @ZenMethod
     public static ThermodynamicsType getType(String name) {
@@ -78,8 +77,8 @@ public class Thermodynamics {
 
         synchronized (ctrl) {
             var system = CACHED.computeIfAbsent(
-                    ctrl,
-                    c -> new ThermodynamicsSystem(type, ctrl)
+                ctrl,
+                c -> new ThermodynamicsSystem(type, ctrl)
             );
             system.readNBT(ctrl.getCustomDataTag());
 
@@ -88,8 +87,8 @@ public class Thermodynamics {
     }
 
     public static ThermodynamicsType addType(
-            ResourceLocation name,
-            ThermodynamicsType system
+        ResourceLocation name,
+        ThermodynamicsType system
     ) {
         return GlobalManagement.addType(ThermodynamicsType.class, name, system);
     }

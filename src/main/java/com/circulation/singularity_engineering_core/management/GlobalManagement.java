@@ -29,30 +29,30 @@ public class GlobalManagement {
 
     public static void preInit() {
         MachineRegistry.getLoadedMachines()
-                .forEach(machine ->
-                        preExecution.forEach(c -> c.accept(machine))
-                );
+                       .forEach(machine ->
+                           preExecution.forEach(c -> c.accept(machine))
+                       );
     }
 
     public static <S extends TemplateType> ObjectCollection<S> getAllType(Class<S> sClass) {
         return (ObjectCollection<S>) systemMap
-                .getOrDefault(sClass, Object2ObjectMaps.emptyMap())
-                .values();
+            .getOrDefault(sClass, Object2ObjectMaps.emptyMap())
+            .values();
     }
 
     public static <S extends TemplateType> S getType(Class<S> sClass, ResourceLocation name) {
         return (S) systemMap
-                .getOrDefault(sClass, Object2ObjectMaps.emptyMap())
-                .get(name);
+            .getOrDefault(sClass, Object2ObjectMaps.emptyMap())
+            .get(name);
     }
 
     public static <S extends TemplateType> S addType(
-            Class<S> sClass,
-            ResourceLocation name,
-            S system
+        Class<S> sClass,
+        ResourceLocation name,
+        S system
     ) {
         return (S) systemMap
-                .computeIfAbsent(sClass, c -> new ConcurrentHashMap<>())
-                .put(name, system);
+            .computeIfAbsent(sClass, c -> new ConcurrentHashMap<>())
+            .put(name, system);
     }
 }
