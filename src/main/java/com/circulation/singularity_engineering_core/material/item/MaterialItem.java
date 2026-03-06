@@ -44,4 +44,12 @@ public class MaterialItem extends Item {
         return matName + " " + partName;
     }
 
+    /**
+     * 当材料开启了附魔光效时，物品始终显示附魔光效（紫色光晕）。
+     */
+    @Override
+    public boolean hasEffect(@NotNull ItemStack stack) {
+        return material.isEnchanted();
+    }
+
 }

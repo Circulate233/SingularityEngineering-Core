@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * <p>
  * 生命周期顺序：
  * <ol>
- *   <li>{@link #registerFluids()} — 在 {@code CommonProxy.preInit()} 中调用（注册事件之前）。</li>
+ *   <li>{@link #registerFluids()} — 订阅 {@code RegistryEvent.Register&lt;Block&gt;}。</li>
  *   <li>{@link #onRegisterBlocks} — 订阅 {@code RegistryEvent.Register&lt;Block&gt;}。</li>
  *   <li>{@link #onRegisterItems} — 订阅 {@code RegistryEvent.Register&lt;Item&gt;}。</li>
  *   <li>{@link #clientRegisterModels()} — 在客户端 {@code ClientProxy.preInit()} 中调用。</li>
@@ -44,6 +44,7 @@ public final class MaterialSystem {
 
     @SubscribeEvent
     public static void onRegisterBlocks(RegistryEvent.Register<Block> event) {
+        MaterialSystem.registerFluids();
         for (IMaterial material : MaterialRegistry.getMaterials()) {
             for (IPart part : MaterialRegistry.getParts()) {
                 if (!isAllowed(material, part)) continue;
@@ -75,6 +76,7 @@ public final class MaterialSystem {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isAllowed(IMaterial material, IPart part) {
         return material.getFilter().allows(part) && part.isApplicableTo(material);
     }

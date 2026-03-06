@@ -33,4 +33,12 @@ public interface IMaterial {
      */
     @ZenGetter("filter")
     MaterialPartFilter getFilter();
+
+    /**
+     * 若为 {@code true}，该材料生成的物品部件及方块部件对应的 ItemBlock 将显示附魔光效。
+     */
+    @ZenGetter("enchanted")
+    default boolean isEnchanted() {
+        return false;
+    }
 }

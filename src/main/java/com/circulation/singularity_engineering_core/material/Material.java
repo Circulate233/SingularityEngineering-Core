@@ -14,10 +14,12 @@ public final class Material implements IMaterial {
 
     private final String id;
     private final MaterialPartFilter filter;
+    private final boolean enchanted;
 
     private Material(Builder builder) {
         this.id = builder.id;
         this.filter = builder.filter;
+        this.enchanted = builder.enchanted;
     }
 
     public static Builder builder(String id) {
@@ -34,10 +36,16 @@ public final class Material implements IMaterial {
         return filter;
     }
 
+    @Override
+    public boolean isEnchanted() {
+        return enchanted;
+    }
+
     public static final class Builder {
 
         private final String id;
         private MaterialPartFilter filter = MaterialPartFilter.allowAll();
+        private boolean enchanted = false;
 
         private Builder(String id) {
             this.id = id;
@@ -56,6 +64,14 @@ public final class Material implements IMaterial {
          */
         public Builder blacklist(IPart... parts) {
             this.filter = new MaterialPartFilter(MaterialFilterMode.BLACKLIST, parts);
+            return this;
+        }
+
+        /**
+         * 启用附魔光效：该材料生成的物品部件及方块 ItemBlock 将显示附魔光效（紫色光晕）。
+         */
+        public Builder enchanted() {
+            this.enchanted = true;
             return this;
         }
 

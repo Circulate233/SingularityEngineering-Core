@@ -38,6 +38,8 @@ val copper = MaterialHelper.createMaterial("copper")
 
 // 材料 3：钛（titanium）
 //   黑名单模式：除 dust 外的所有部件均可注册
+//   启用附魔光效：物品部件及方块 ItemBlock 显示紫色附魔光晕
 val titanium = MaterialHelper.createMaterial("titanium")
     .blacklist(partDust)
+    .enchanted()
     .build();

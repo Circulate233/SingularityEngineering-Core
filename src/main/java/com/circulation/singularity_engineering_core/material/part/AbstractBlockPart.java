@@ -3,6 +3,7 @@ package com.circulation.singularity_engineering_core.material.part;
 import com.circulation.singularity_engineering_core.SingularityEngineeringCore;
 import com.circulation.singularity_engineering_core.material.IMaterial;
 import com.circulation.singularity_engineering_core.material.block.MaterialBlock;
+import com.circulation.singularity_engineering_core.material.block.MaterialItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -42,7 +43,7 @@ public abstract class AbstractBlockPart extends AbstractPart {
         Block block = Block.REGISTRY.getObject(
             new net.minecraft.util.ResourceLocation(SingularityEngineeringCore.MOD_ID, blockId));
         if (block != net.minecraft.init.Blocks.AIR) {
-            ItemBlock ib = new ItemBlock(block);
+            MaterialItemBlock ib = new MaterialItemBlock(block, material.isEnchanted());
             ib.setRegistryName(Objects.requireNonNull(block.getRegistryName()));
             registry.register(ib);
         }

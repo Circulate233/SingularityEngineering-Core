@@ -51,6 +51,15 @@ public class CrtMaterialBuilder {
     }
 
     /**
+     * 启用附魔光效：该材料生成的物品部件及方块 ItemBlock 将显示附魔光效（紫色光晕）。
+     */
+    @ZenMethod
+    public CrtMaterialBuilder enchanted() {
+        inner.enchanted();
+        return this;
+    }
+
+    /**
      * 构建材料，将其注册并返回 {@link IMaterial} 实例。
      */
     @ZenMethod

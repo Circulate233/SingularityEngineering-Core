@@ -61,7 +61,6 @@ public abstract class AbstractFluidPart extends AbstractPart {
     @Override
     public void registerFluids(IMaterial material) {
         Fluid fluid = createFluid(material);
-        FluidRegistry.registerFluid(fluid);
         FluidRegistry.addBucketForFluid(fluid);
         Block fluidBlock = createFluidBlock(material, fluid);
         if (fluidBlock != null) {
