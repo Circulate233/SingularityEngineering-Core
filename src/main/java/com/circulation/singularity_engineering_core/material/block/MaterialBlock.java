@@ -2,11 +2,14 @@ package com.circulation.singularity_engineering_core.material.block;
 
 import com.circulation.singularity_engineering_core.material.IMaterial;
 import com.circulation.singularity_engineering_core.material.MaterialRegistry;
+import com.circulation.singularity_engineering_core.material.part.AbstractBlockPart;
 import com.circulation.singularity_engineering_core.material.part.IPart;
 import lombok.Getter;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -22,16 +25,33 @@ import org.jetbrains.annotations.NotNull;
 public class MaterialBlock extends Block {
 
     private final IMaterial gameMaterial;
-    private final IPart part;
+    private final AbstractBlockPart part;
 
-    public MaterialBlock(String modId, IMaterial gameMaterial, IPart part) {
+    public MaterialBlock(String modId, IMaterial gameMaterial, AbstractBlockPart part) {
         super(Material.IRON);
         this.gameMaterial = gameMaterial;
         this.part = part;
         String blockId = part.getItemId(gameMaterial);
         setRegistryName(modId, blockId);
         setTranslationKey(blockId);
-        setCreativeTab(MaterialRegistry.creativeTabs);
+        setCreativeTab(MaterialRegistry.resolveCreativeTab(part.getConfiguredCreativeTab()));
+        if (part.getConfiguredHardness() != null) {
+            setHardness(part.getConfiguredHardness());
+        }
+        if (part.getConfiguredResistance() != null) {
+            setResistance(part.getConfiguredResistance());
+        }
+        setSoundType(part.getConfiguredSoundType());
+        if (part.getConfiguredHarvestTool() != null) {
+            setHarvestLevel(part.getConfiguredHarvestTool(), part.getConfiguredHarvestLevel());
+        }
+        setLightLevel(Math.max(0, Math.min(15, part.getConfiguredLightValue())) / 15.0F);
+        if (part.getConfiguredLightOpacity() != null) {
+            setLightOpacity(part.getConfiguredLightOpacity());
+        }
+        if (part.getConfiguredSlipperiness() != null) {
+            slipperiness = part.getConfiguredSlipperiness();
+        }
     }
 
     /**
@@ -43,5 +63,21 @@ public class MaterialBlock extends Block {
         String matName = I18n.format(gameMaterial.getTranslationKey());
         String partName = I18n.format(part.getTranslationKey());
         return matName + " " + partName;
+    }
+
+    @Override
+    public boolean isOpaqueCube(@NotNull IBlockState state) {
+        return part.isConfiguredOpaqueCube();
+    }
+
+    @Override
+    public boolean isFullCube(@NotNull IBlockState state) {
+        return part.isConfiguredFullBlock();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public @NotNull BlockRenderLayer getRenderLayer() {
+        return part.getConfiguredRenderLayer();
     }
 }

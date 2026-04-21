@@ -13,6 +13,8 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 @ZenClass(CrtName + "IMaterial")
 public interface IMaterial {
 
+    int NO_COLOR = -1;
+
     /**
      * 唯一 snake_case 标识符，例如 {@code "iron"}，用于注册名。
      */
@@ -33,6 +35,15 @@ public interface IMaterial {
      */
     @ZenGetter("filter")
     MaterialPartFilter getFilter();
+
+    /**
+     * 材料的渲染颜色，格式为 {@code 0xRRGGBB}。
+     * 返回 {@link #NO_COLOR} 表示保持默认颜色。
+     */
+    @ZenGetter("color")
+    default int getColor() {
+        return NO_COLOR;
+    }
 
     /**
      * 若为 {@code true}，该材料生成的物品部件及方块部件对应的 ItemBlock 将显示附魔光效。

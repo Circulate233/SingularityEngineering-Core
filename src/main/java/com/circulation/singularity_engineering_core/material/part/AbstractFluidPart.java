@@ -7,11 +7,13 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * 产生 {@link Fluid}（及可选流体方块）的部件基类。
@@ -24,15 +26,54 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractFluidPart extends AbstractPart {
 
-    protected AbstractFluidPart(String id) {
-        super(id);
+    private final String stillTexture;
+    private final String flowingTexture;
+    private final int baseColor;
+    private final int density;
+    private final int temperature;
+    private final int viscosity;
+    private final int luminosity;
+    private final boolean gaseous;
+    private final boolean bucket;
+
+    protected AbstractFluidPart(
+        String id,
+        boolean usesMaterialColor,
+        String stillTexture,
+        String flowingTexture,
+        int baseColor,
+        int density,
+        int temperature,
+        int viscosity,
+        int luminosity,
+        boolean gaseous,
+        boolean bucket
+    ) {
+        super(id, usesMaterialColor);
+        this.stillTexture = stillTexture;
+        this.flowingTexture = flowingTexture;
+        this.baseColor = baseColor;
+        this.density = density;
+        this.temperature = temperature;
+        this.viscosity = viscosity;
+        this.luminosity = luminosity;
+        this.gaseous = gaseous;
+        this.bucket = bucket;
     }
 
-    /**
-     * 工厂方法：为给定材料创建 {@link Fluid}。
-     * 返回的流体不得已被注册。
-     */
-    protected abstract Fluid createFluid(IMaterial material);
+    protected Fluid createFluid(IMaterial material) {
+        String fluidName = getItemId(material);
+        Fluid fluid = new Fluid(fluidName, getStillTexture(material), getFlowingTexture(material), resolveFluidColor(material)) {
+            @Override
+            public String getLocalizedName(FluidStack stack) {
+                String matName = I18n.format(material.getTranslationKey());
+                String partName = I18n.format(AbstractFluidPart.this.getTranslationKey());
+                return matName + " " + partName;
+            }
+        };
+        applyFluidProperties(fluid, material);
+        return fluid;
+    }
 
     /**
      * 工厂方法：为给定材料和已注册流体创建流体方块。
@@ -60,11 +101,22 @@ public abstract class AbstractFluidPart extends AbstractPart {
      */
     @Override
     public void registerFluids(IMaterial material) {
-        Fluid fluid = createFluid(material);
-        FluidRegistry.addBucketForFluid(fluid);
-        Block fluidBlock = createFluidBlock(material, fluid);
-        if (fluidBlock != null) {
-            fluid.setBlock(fluidBlock);
+        String fluidName = getItemId(material);
+        Fluid fluid = FluidRegistry.getFluid(fluidName);
+        if (fluid == null) {
+            fluid = createFluid(material);
+            FluidRegistry.registerFluid(fluid);
+        } else {
+            applyFluidProperties(fluid, material);
+        }
+        if (bucket) {
+            FluidRegistry.addBucketForFluid(fluid);
+        }
+        if (fluid.getBlock() == null) {
+            Block fluidBlock = createFluidBlock(material, fluid);
+            if (fluidBlock != null) {
+                fluid.setBlock(fluidBlock);
+            }
         }
     }
 
@@ -86,5 +138,39 @@ public abstract class AbstractFluidPart extends AbstractPart {
      */
     @Override
     public void registerItems(IMaterial material, IForgeRegistry<Item> registry) {
+    }
+
+    private void applyFluidProperties(Fluid fluid, IMaterial material) {
+        fluid.setColor(resolveFluidColor(material));
+        fluid.setDensity(density);
+        fluid.setTemperature(temperature);
+        fluid.setViscosity(viscosity);
+        fluid.setLuminosity(luminosity);
+        fluid.setGaseous(gaseous);
+    }
+
+    private ResourceLocation getStillTexture(IMaterial material) {
+        if (stillTexture != null) {
+            return new ResourceLocation(stillTexture);
+        }
+        return new ResourceLocation(SingularityEngineeringCore.MOD_ID, "blocks/" + getItemId(material) + "_still");
+    }
+
+    private ResourceLocation getFlowingTexture(IMaterial material) {
+        if (flowingTexture != null) {
+            return new ResourceLocation(flowingTexture);
+        }
+        return new ResourceLocation(SingularityEngineeringCore.MOD_ID, "blocks/" + getItemId(material) + "_flow");
+    }
+
+    private int resolveFluidColor(IMaterial material) {
+        if (usesMaterialColor()) {
+            return material.getColor() == IMaterial.NO_COLOR ? 0xFFFFFFFF : 0xFF000000 | material.getColor();
+        }
+        return normalizeFluidColor(baseColor);
+    }
+
+    private static int normalizeFluidColor(int color) {
+        return (color & 0xFF000000) == 0 ? 0xFF000000 | color : color;
     }
 }

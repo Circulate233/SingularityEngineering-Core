@@ -5,7 +5,6 @@ import com.circulation.singularity_engineering_core.material.part.AbstractBlockP
 import com.circulation.singularity_engineering_core.material.part.AbstractItemPart;
 import com.circulation.singularity_engineering_core.material.part.IPart;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IResourceManager;
@@ -15,7 +14,6 @@ import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -27,13 +25,13 @@ import java.util.Set;
 /**
  * Forge {@link ICustomModelLoader} 实现，为资源包中没有对应模型文件的
  * {@link com.circulation.singularity_engineering_core.material.IMaterial} × {@link IPart} 组合
- * 自动生成扁平物品模型和 cube_all 方块模型。
+ * 自动生成扁平物品模型和带 tint 的方块模型。
  * <p>
  * <b>物品模型</b>以材质 {@code modId:items/material_part} 作为 {@link ItemLayerModel} 提供，
  * 对应路径 {@code assets/<modId>/models/item/<name>.json}。<br>
  * <b>方块物品模型</b>指向方块模型 {@code modId:block/material_part}，
  * 对应路径 {@code assets/<modId>/models/item/<name>.json}。<br>
- * <b>方块模型</b>以重贴图的 {@code block/cube_all}（材质 {@code modId:blocks/material_part}）提供，
+ * <b>方块模型</b>以带 {@code tintindex: 0} 的立方体模型（材质 {@code modId:blocks/material_part}）提供，
  * 对应路径 {@code assets/<modId>/models/block/<name>.json}。
  * <p>
  * 若资源包中已存在某路径对应的真实 JSON 模型文件，Forge 内置加载器会作为降级选项处理；
@@ -91,16 +89,15 @@ public enum MaterialModelLoader implements ICustomModelLoader {
         MaterialResourcePack.INSTANCE.put(modId, "blockstates/" + blockId + ".json",
             "{\"variants\":{\"normal\":{\"model\":\"" + modId + ":block/" + blockId + "\"}}}");
 
-        // 方块模型 JSON（cube_all），作为 ICustomModelLoader 的兜底
+        // 方块模型 JSON（带 tint 的立方体），由虚拟资源包直接提供
         MaterialResourcePack.INSTANCE.put(modId, "models/block/" + blockId + ".json",
-            MaterialModelTemplates.blockCubeAll(modId + ":blocks/" + blockId));
+            part.usesMaterialColor()
+                ? MaterialModelTemplates.blockCubeAllTinted(modId + ":blocks/" + blockId)
+                : MaterialModelTemplates.blockCubeAll(modId + ":blocks/" + blockId));
 
         // 物品栏方块物品 JSON：引用父方块模型，与 ICustomModelLoader 保持一致
         MaterialResourcePack.INSTANCE.put(modId, "models/item/" + blockId + ".json",
             "{\"parent\":\"" + modId + ":block/" + blockId + "\"}");
-
-        managedModels.add(new ResourceLocation(modId, "models/item/" + blockId));
-        managedModels.add(new ResourceLocation(modId, "models/block/" + blockId));
 
         ModelLoader.setCustomModelResourceLocation(
             itemBlock, 0,
@@ -113,7 +110,7 @@ public enum MaterialModelLoader implements ICustomModelLoader {
     }
 
     @Override
-    public @NotNull IModel loadModel(ResourceLocation modelLocation) throws Exception {
+    public @NotNull IModel loadModel(ResourceLocation modelLocation) {
         String path = modelLocation.getPath();
         String modId = modelLocation.getNamespace();
 
@@ -122,11 +119,6 @@ public enum MaterialModelLoader implements ICustomModelLoader {
             ResourceLocation textureLoc = new ResourceLocation(modId, "items/" + itemId);
             return new ItemLayerModel(ImmutableList.of(textureLoc));
 
-        } else if (path.startsWith("models/block/")) {
-            String blockId = path.substring("models/block/".length());
-            ResourceLocation textureLoc = new ResourceLocation(modId, "blocks/" + blockId);
-            IModel cubeAll = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all"));
-            return cubeAll.retexture(ImmutableMap.of("all", textureLoc.toString()));
         }
 
         throw new IllegalArgumentException("MaterialModelLoader: unexpected managed path: " + modelLocation);

@@ -28,31 +28,37 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 @ZenClass(CrtName + "MaterialHelper")
 public final class MaterialHandler {
 
-    public static final String TYPE_ITEM = "item";
-    public static final String TYPE_BLOCK = "block";
-    public static final String TYPE_FLUID = "fluid";
-
     private MaterialHandler() {
     }
 
     @ZenMethod
-    public static CrtPartBuilder createItemPart(String id) {
-        return new CrtPartBuilder(id, TYPE_ITEM);
+    public static CrtItemPartBuilder createItemPart(String id) {
+        return new CrtItemPartBuilder(id);
     }
 
     @ZenMethod
-    public static CrtPartBuilder createBlockPart(String id) {
-        return new CrtPartBuilder(id, TYPE_BLOCK);
+    public static CrtBlockPartBuilder createBlockPart(String id) {
+        return new CrtBlockPartBuilder(id);
     }
 
     @ZenMethod
-    public static CrtPartBuilder createFluidPart(String id) {
-        return new CrtPartBuilder(id, TYPE_FLUID);
+    public static CrtFluidPartBuilder createFluidPart(String id) {
+        return new CrtFluidPartBuilder(id);
+    }
+
+    @ZenMethod
+    public static CrtGasPartBuilder createGasPart(String id) {
+        return new CrtGasPartBuilder(id);
     }
 
     @ZenMethod
     public static CrtMaterialBuilder createMaterial(String id) {
         return new CrtMaterialBuilder(id);
+    }
+
+    @ZenMethod
+    public static CrtCreativeTabBuilder createCreativeTab(String id) {
+        return new CrtCreativeTabBuilder(id);
     }
 
     @ZenMethod

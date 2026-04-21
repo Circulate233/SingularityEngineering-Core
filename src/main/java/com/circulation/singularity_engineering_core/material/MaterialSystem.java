@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * <p>
  * 生命周期顺序：
  * <ol>
+ *   <li>{@link #registerGases()} — 在早期注册独立气体。</li>
  *   <li>{@link #registerFluids()} — 订阅 {@code RegistryEvent.Register&lt;Block&gt;}。</li>
  *   <li>{@link #onRegisterBlocks} — 订阅 {@code RegistryEvent.Register&lt;Block&gt;}。</li>
  *   <li>{@link #onRegisterItems} — 订阅 {@code RegistryEvent.Register&lt;Item&gt;}。</li>
@@ -33,6 +34,15 @@ public final class MaterialSystem {
     private MaterialSystem() {
     }
 
+    public static void registerGases() {
+        for (IMaterial material : MaterialRegistry.getMaterials()) {
+            for (IPart part : MaterialRegistry.getParts()) {
+                if (!isAllowed(material, part)) continue;
+                part.registerGases(material);
+            }
+        }
+    }
+
     public static void registerFluids() {
         for (IMaterial material : MaterialRegistry.getMaterials()) {
             for (IPart part : MaterialRegistry.getParts()) {
@@ -44,6 +54,7 @@ public final class MaterialSystem {
 
     @SubscribeEvent
     public static void onRegisterBlocks(RegistryEvent.Register<Block> event) {
+        MaterialSystem.registerGases();
         MaterialSystem.registerFluids();
         for (IMaterial material : MaterialRegistry.getMaterials()) {
             for (IPart part : MaterialRegistry.getParts()) {

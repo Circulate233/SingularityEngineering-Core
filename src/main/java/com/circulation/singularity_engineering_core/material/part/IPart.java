@@ -14,8 +14,8 @@ import static com.circulation.singularity_engineering_core.crt.CrtAPI.CrtName;
 /**
  * 代表一种部件模板（如齿轮、粉末、燕融流体），可与 {@link IMaterial} 组合注册为游戏对象。
  * <p>
- * 三个 {@code register*} 方法由 {@link com.circulation.singularity_engineering_core.material.MaterialSystem}
- * 在对应的 Forge 生命周期阶段调用，实现类仅需重写与自身类型（物品、方块或流体）相关的方法。
+ * 各个 {@code register*} 方法由 {@link com.circulation.singularity_engineering_core.material.MaterialSystem}
+ * 在对应的 Forge 生命周期阶段调用，实现类仅需重写与自身类型（物品、方块、流体或气体）相关的方法。
  */
 @ZenRegister
 @ZenClass(CrtName + "IPart")
@@ -61,6 +61,16 @@ public interface IPart {
         return true;
     }
 
+    @ZenMethod
+    default boolean usesMaterialColor() {
+        return false;
+    }
+
+    @ZenMethod
+    default String getOreDictName(IMaterial material) {
+        return null;
+    }
+
     default void registerItems(IMaterial material, IForgeRegistry<Item> registry) {
     }
 
@@ -71,6 +81,12 @@ public interface IPart {
      * 在 preInit 阶段调用（在注册事件之前）。在 {@link AbstractFluidPart} 中重写。
      */
     default void registerFluids(IMaterial material) {
+    }
+
+    /**
+     * 在 preInit 阶段调用（在注册事件之前）。在独立气体部件中重写。
+     */
+    default void registerGases(IMaterial material) {
     }
 
     /**

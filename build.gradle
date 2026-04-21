@@ -10,7 +10,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.9'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.4.1'
+    id 'com.gtnewhorizons.retrofuturagradle' version '2.0.2'
     id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
     id 'com.modrinth.minotaur' version '2.+' apply false
     id 'org.jetbrains.changelog' version '2.2.1'
@@ -208,6 +208,7 @@ dependencies {
     implementation(rfg.deobf("curse.maven:configanytime-870276:5212709"))
     implementation(rfg.deobf("curse.maven:modularmachinery-community-edition-817377:7372951"))
     implementation(rfg.deobf("curse.maven:zenutil-401178:6895021"))
+    implementation(rfg.deobf("curse.maven:mekanism-ce-unofficial-840735:5946841"))
 }
 
 apply from: 'gradle/scripts/dependencies.gradle'

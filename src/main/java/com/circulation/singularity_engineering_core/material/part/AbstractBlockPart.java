@@ -4,9 +4,12 @@ import com.circulation.singularity_engineering_core.SingularityEngineeringCore;
 import com.circulation.singularity_engineering_core.material.IMaterial;
 import com.circulation.singularity_engineering_core.material.block.MaterialBlock;
 import com.circulation.singularity_engineering_core.material.block.MaterialItemBlock;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Objects;
@@ -18,15 +21,53 @@ import java.util.Objects;
  */
 public abstract class AbstractBlockPart extends AbstractPart {
 
-    protected AbstractBlockPart(String id) {
-        super(id);
+    private final Float hardness;
+    private final Float resistance;
+    private final SoundType soundType;
+    private final String harvestTool;
+    private final int harvestLevel;
+    private final int lightValue;
+    private final Integer lightOpacity;
+    private final Float slipperiness;
+    private final boolean fullBlock;
+    private final boolean translucent;
+    private final BlockRenderLayer renderLayer;
+    private final String creativeTab;
+
+    protected AbstractBlockPart(
+        String id,
+        boolean usesMaterialColor,
+        Float hardness,
+        Float resistance,
+        SoundType soundType,
+        String harvestTool,
+        int harvestLevel,
+        int lightValue,
+        Integer lightOpacity,
+        Float slipperiness,
+        boolean fullBlock,
+        boolean translucent,
+        BlockRenderLayer renderLayer,
+        String creativeTab
+    ) {
+        super(id, usesMaterialColor);
+        this.hardness = hardness;
+        this.resistance = resistance;
+        this.soundType = soundType;
+        this.harvestTool = harvestTool;
+        this.harvestLevel = harvestLevel;
+        this.lightValue = lightValue;
+        this.lightOpacity = lightOpacity;
+        this.slipperiness = slipperiness;
+        this.fullBlock = fullBlock;
+        this.translucent = translucent;
+        this.renderLayer = renderLayer;
+        this.creativeTab = creativeTab;
     }
 
-    /**
-     * 工厂方法：为给定材料创建 {@link MaterialBlock}。
-     * 返回的方块不得已被注册。
-     */
-    protected abstract MaterialBlock createBlock(IMaterial material);
+    protected MaterialBlock createBlock(IMaterial material) {
+        return new MaterialBlock(SingularityEngineeringCore.MOD_ID, material, this);
+    }
 
     @Override
     public void registerBlocks(IMaterial material, IForgeRegistry<Block> registry) {
@@ -46,6 +87,10 @@ public abstract class AbstractBlockPart extends AbstractPart {
             MaterialItemBlock ib = new MaterialItemBlock(block, material.isEnchanted());
             ib.setRegistryName(Objects.requireNonNull(block.getRegistryName()));
             registry.register(ib);
+            String oreDictName = getOreDictName(material);
+            if (oreDictName != null) {
+                OreDictionary.registerOre(oreDictName, ib);
+            }
         }
     }
 
@@ -53,5 +98,62 @@ public abstract class AbstractBlockPart extends AbstractPart {
     public void registerModels(IMaterial material) {
         com.circulation.singularity_engineering_core.material.model.MaterialModelLoader
             .INSTANCE.registerBlock(SingularityEngineeringCore.MOD_ID, material, this);
+    }
+
+    @Override
+    public String getOreDictName(IMaterial material) {
+        return getId() + toUpperCamel(material.getId());
+    }
+
+    public Float getConfiguredHardness() {
+        return hardness;
+    }
+
+    public Float getConfiguredResistance() {
+        return resistance;
+    }
+
+    public SoundType getConfiguredSoundType() {
+        return soundType;
+    }
+
+    public String getConfiguredHarvestTool() {
+        return harvestTool;
+    }
+
+    public int getConfiguredHarvestLevel() {
+        return harvestLevel;
+    }
+
+    public int getConfiguredLightValue() {
+        return lightValue;
+    }
+
+    public Integer getConfiguredLightOpacity() {
+        return lightOpacity;
+    }
+
+    public Float getConfiguredSlipperiness() {
+        return slipperiness;
+    }
+
+    public boolean isConfiguredFullBlock() {
+        return fullBlock;
+    }
+
+    public boolean isConfiguredTranslucent() {
+        return translucent;
+    }
+
+    public boolean isConfiguredOpaqueCube() {
+        return fullBlock && !translucent && renderLayer == BlockRenderLayer.SOLID;
+    }
+
+    public BlockRenderLayer getConfiguredRenderLayer() {
+        return renderLayer;
+    }
+
+    public String getConfiguredCreativeTab() {
+        return creativeTab;
     }
 }

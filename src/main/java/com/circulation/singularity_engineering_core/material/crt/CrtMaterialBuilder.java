@@ -33,7 +33,7 @@ public class CrtMaterialBuilder {
 
     /**
      * 切换为白名单模式：仅允许列出的部件为该材料注册。
-     * 接受 {@link CrtPartBuilder#build()} 返回的 {@link IPart} 实例。
+     * 接受各类 part builder 的 {@link IPart} 构建结果。
      */
     @ZenMethod
     public CrtMaterialBuilder whitelist(IPart... parts) {
@@ -47,6 +47,16 @@ public class CrtMaterialBuilder {
     @ZenMethod
     public CrtMaterialBuilder blacklist(IPart... parts) {
         inner.blacklist(parts);
+        return this;
+    }
+
+    /**
+     * 设置材料的渲染颜色，格式为 {@code 0xRRGGBB}。
+     * 传入 {@link IMaterial#NO_COLOR} 表示保持默认颜色。
+     */
+    @ZenMethod
+    public CrtMaterialBuilder color(int rgb) {
+        inner.color(rgb);
         return this;
     }
 

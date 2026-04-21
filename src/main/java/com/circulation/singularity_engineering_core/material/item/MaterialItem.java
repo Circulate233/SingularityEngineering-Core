@@ -2,6 +2,7 @@ package com.circulation.singularity_engineering_core.material.item;
 
 import com.circulation.singularity_engineering_core.material.IMaterial;
 import com.circulation.singularity_engineering_core.material.MaterialRegistry;
+import com.circulation.singularity_engineering_core.material.part.AbstractItemPart;
 import com.circulation.singularity_engineering_core.material.part.IPart;
 import lombok.Getter;
 import net.minecraft.client.resources.I18n;
@@ -22,15 +23,17 @@ import org.jetbrains.annotations.NotNull;
 public class MaterialItem extends Item {
 
     private final IMaterial material;
-    private final IPart part;
+    private final AbstractItemPart part;
 
-    public MaterialItem(String modId, IMaterial material, IPart part) {
+    public MaterialItem(String modId, IMaterial material, AbstractItemPart part) {
         this.material = material;
         this.part = part;
         String itemId = part.getItemId(material);
         setRegistryName(modId, itemId);
         setTranslationKey(itemId);
-        setCreativeTab(MaterialRegistry.creativeTabs);
+        setCreativeTab(MaterialRegistry.resolveCreativeTab(part.getConfiguredCreativeTab()));
+        setMaxStackSize(part.getConfiguredMaxStackSize());
+        setMaxDamage(part.getConfiguredMaxDamage());
     }
 
     /**

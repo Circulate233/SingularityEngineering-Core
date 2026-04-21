@@ -20,6 +20,7 @@ public final class MaterialRegistry {
 
     private static final Map<String, IMaterial> MATERIALS = new LinkedHashMap<>();
     private static final Map<String, IPart> PARTS = new LinkedHashMap<>();
+    private static final Map<String, CreativeTabs> CREATIVE_TABS = new LinkedHashMap<>();
     public static final CreativeTabs creativeTabs = new CreativeTabs("materials") {
         @Override
         public @NotNull ItemStack createIcon() {
@@ -40,6 +41,11 @@ public final class MaterialRegistry {
         return part;
     }
 
+    public static String registerCreativeTab(String id, String iconItemString) {
+        CREATIVE_TABS.put(id, new MaterialCreativeTab(id, iconItemString));
+        return id;
+    }
+
     public static IMaterial getMaterial(String id) {
         return MATERIALS.get(id);
     }
@@ -56,11 +62,38 @@ public final class MaterialRegistry {
         return Collections.unmodifiableCollection(PARTS.values());
     }
 
+    public static CreativeTabs resolveCreativeTab(String id) {
+        if (id == null || id.isEmpty()) {
+            return creativeTabs;
+        }
+        CreativeTabs customTab = CREATIVE_TABS.get(id);
+        if (customTab != null) {
+            return customTab;
+        }
+        return switch (id.toUpperCase()) {
+            case "BUILDING_BLOCKS" -> CreativeTabs.BUILDING_BLOCKS;
+            case "DECORATIONS" -> CreativeTabs.DECORATIONS;
+            case "REDSTONE" -> CreativeTabs.REDSTONE;
+            case "TRANSPORTATION" -> CreativeTabs.TRANSPORTATION;
+            case "MISC" -> CreativeTabs.MISC;
+            case "SEARCH" -> CreativeTabs.SEARCH;
+            case "FOOD" -> CreativeTabs.FOOD;
+            case "TOOLS" -> CreativeTabs.TOOLS;
+            case "COMBAT" -> CreativeTabs.COMBAT;
+            case "BREWING" -> CreativeTabs.BREWING;
+            case "MATERIALS" -> CreativeTabs.MATERIALS;
+            case "INVENTORY" -> CreativeTabs.INVENTORY;
+            case "HOTBAR" -> CreativeTabs.HOTBAR;
+            default -> creativeTabs;
+        };
+    }
+
     /**
      * 清除所有注册项，用于支持 ZenUtils 脚本热重载。
      */
     public static void clear() {
         MATERIALS.clear();
         PARTS.clear();
+        CREATIVE_TABS.clear();
     }
 }

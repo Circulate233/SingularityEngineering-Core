@@ -14,11 +14,13 @@ public final class Material implements IMaterial {
 
     private final String id;
     private final MaterialPartFilter filter;
+    private final int color;
     private final boolean enchanted;
 
     private Material(Builder builder) {
         this.id = builder.id;
         this.filter = builder.filter;
+        this.color = builder.color;
         this.enchanted = builder.enchanted;
     }
 
@@ -37,6 +39,11 @@ public final class Material implements IMaterial {
     }
 
     @Override
+    public int getColor() {
+        return color;
+    }
+
+    @Override
     public boolean isEnchanted() {
         return enchanted;
     }
@@ -45,6 +52,7 @@ public final class Material implements IMaterial {
 
         private final String id;
         private MaterialPartFilter filter = MaterialPartFilter.allowAll();
+        private int color = IMaterial.NO_COLOR;
         private boolean enchanted = false;
 
         private Builder(String id) {
@@ -64,6 +72,15 @@ public final class Material implements IMaterial {
          */
         public Builder blacklist(IPart... parts) {
             this.filter = new MaterialPartFilter(MaterialFilterMode.BLACKLIST, parts);
+            return this;
+        }
+
+        /**
+         * 设置材料的渲染颜色，格式为 {@code 0xRRGGBB}。
+         * 传入 {@link IMaterial#NO_COLOR} 表示保持默认颜色。
+         */
+        public Builder color(int color) {
+            this.color = color;
             return this;
         }
 

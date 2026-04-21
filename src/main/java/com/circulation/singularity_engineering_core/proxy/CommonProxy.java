@@ -2,6 +2,7 @@ package com.circulation.singularity_engineering_core.proxy;
 
 import com.circulation.singularity_engineering_core.handler.ThermodynamicsHandler;
 import com.circulation.singularity_engineering_core.management.GlobalManagement;
+import com.circulation.singularity_engineering_core.material.MaterialRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
@@ -28,6 +29,7 @@ public class CommonProxy {
     @Optional.Method(modid = "zenutils")
     public void onScriptsReloading(ScriptReloadEvent.Pre event) {
         GlobalManagement.clear();
+        MaterialRegistry.clear();
         ThermodynamicsHandler.preload();
     }
 

@@ -13,9 +13,11 @@ import com.circulation.singularity_engineering_core.material.IMaterial;
 public abstract class AbstractPart implements IPart {
 
     private final String id;
+    private final boolean usesMaterialColor;
 
-    protected AbstractPart(String id) {
+    protected AbstractPart(String id, boolean usesMaterialColor) {
         this.id = id;
+        this.usesMaterialColor = usesMaterialColor;
     }
 
     @Override
@@ -31,5 +33,25 @@ public abstract class AbstractPart implements IPart {
     @Override
     public boolean isApplicableTo(IMaterial material) {
         return true;
+    }
+
+    @Override
+    public boolean usesMaterialColor() {
+        return usesMaterialColor;
+    }
+
+    protected static String toUpperCamel(String snakeCase) {
+        StringBuilder builder = new StringBuilder(snakeCase.length());
+        boolean capitalizeNext = true;
+        for (int i = 0; i < snakeCase.length(); i++) {
+            char current = snakeCase.charAt(i);
+            if (current == '_') {
+                capitalizeNext = true;
+                continue;
+            }
+            builder.append(capitalizeNext ? Character.toUpperCase(current) : current);
+            capitalizeNext = false;
+        }
+        return builder.toString();
     }
 }
